@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore;
 using RegistroTecnicos.Models;
 
 namespace RegistroTecnicos.DAL

@@ -8,8 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-
-
 // obtenemos el ConStr para usarlo en el contexto
 var conStr = builder.Configuration.GetConnectionString("NpgsqlConStr");
 
