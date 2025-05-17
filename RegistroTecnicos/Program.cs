@@ -1,10 +1,20 @@
+using Microsoft.EntityFrameworkCore;
 using RegistroTecnicos.Components;
+using RegistroTecnicos.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
+
+// obtenemos el ConStr para usarlo en el contexto
+var conStr = builder.Configuration.GetConnectionString("NpgsqlConStr");
+
+// agregamos el contexto al builder con el ConStr
+builder.Services.AddDbContextFactory<Contexto>(o => o.UseNpgsql(conStr));
 
 var app = builder.Build();
 
