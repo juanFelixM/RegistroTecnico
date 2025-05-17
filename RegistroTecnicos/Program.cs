@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RegistroTecnicos.Components;
 using RegistroTecnicos.DAL;
+using RegistroTecnicos.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ var conStr = builder.Configuration.GetConnectionString("NpgsqlConStr");
 
 // agregamos el contexto al builder con el ConStr
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseNpgsql(conStr));
+
+//Inyeccion del service
+builder.Services.AddScoped<TecnicosSerices>();
 
 var app = builder.Build();
 
