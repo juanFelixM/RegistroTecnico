@@ -15,13 +15,14 @@ namespace RegistroTecnicos.Migrations
                 name: "Tecnicos",
                 columns: table => new
                 {
-                    TecnicosId = table.Column<int>(type: "integer", nullable: false)
+                    TecnicoId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Conceptos = table.Column<string>(type: "text", nullable: false)
+                    Nombres = table.Column<string>(type: "text", nullable: false),
+                    SueldoHora = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tecnicos", x => x.TecnicosId);
+                    table.PrimaryKey("PK_Tecnicos", x => x.TecnicoId);
                 });
         }
 

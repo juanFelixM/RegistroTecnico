@@ -16,7 +16,7 @@ var conStr = builder.Configuration.GetConnectionString("NpgsqlConStr");
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseNpgsql(conStr));
 
 //Inyeccion del service
-builder.Services.AddScoped<TecnicosSerices>();
+builder.Services.AddScoped<TecnicosServices>();
 
 var app = builder.Build();
 

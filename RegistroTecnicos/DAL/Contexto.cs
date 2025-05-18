@@ -1,5 +1,5 @@
-﻿using GestorTecnicos.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using RegistroTecnicos.Models;
 
 namespace RegistroTecnicos.DAL
 {

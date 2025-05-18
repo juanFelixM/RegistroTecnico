@@ -23,17 +23,20 @@ namespace RegistroTecnicos.Migrations
 
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
                 {
-                    b.Property<int>("TecnicosId")
+                    b.Property<int>("TecnicoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TecnicosId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TecnicoId"));
 
-                    b.Property<string>("Conceptos")
+                    b.Property<string>("Nombres")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("TecnicosId");
+                    b.Property<double>("SueldoHora")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("TecnicoId");
 
                     b.ToTable("Tecnicos");
                 });

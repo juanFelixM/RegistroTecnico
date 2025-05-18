@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GestorTecnicos.Models
+namespace RegistroTecnicos.Models
 {
     public class Tecnicos
     {

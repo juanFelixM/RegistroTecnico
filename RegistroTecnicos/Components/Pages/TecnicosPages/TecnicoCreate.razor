@@ -1,0 +1,78 @@
+﻿@page "/Tecnico/Create"
+@inject TecnicosServices tecnicosServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+@*HTML*@
+<PageTitle>Create</PageTitle>
+<EditForm Model="Tecnico" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h5 class="card-title">Registrar Tecnico</h5>
+            </div>
+
+            <div class="card-body">
+
+                @*TecnicoId*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>TecnicoID</strong>
+                        <InputNumber class="form-control" @bind-Value="Tecnico.TecnicoId"></InputNumber>
+                    </label>
+                </div>
+
+                @*Nombres*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>Nombres</strong>
+                        <InputText class="form-control" @bind-Value="Tecnico.Nombres"></InputText>
+                        <ValidationMessage For="(() => Tecnico.Nombres)" />
+                    </label>
+                </div>
+
+                @*SueldoHora*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>SueldoHora</strong>
+                        <InputNumber class="form-control" @bind-Value="Tecnico.SueldoHora"></InputNumber>
+                        <ValidationMessage For="(() => Tecnico.SueldoHora)" />
+                    </label>
+                </div>
+
+                @*footer*@
+                <div class="card-footer text-center mt-2">
+                    <a href="/Tecnico/Index" class="btn btn-secondary">
+                        <span class="bi bi-arrow-left"> </span>
+                        Volver
+                    </a>
+
+                    <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code
+{
+    private string TecnicoExistente = "";
+
+    private Tecnicos Tecnico { get; set; } = new Tecnicos();
+
+    public async Task Guardar()
+    {
+        List<Tecnicos> tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
+        if (tecnicos.Count == 1 && (tecnicos[0].TecnicoId != Tecnico.TecnicoId))
+        {
+            TecnicoExistente = "Ya existe este tecnico";
+            return;
+        }
+        await tecnicosServices.Guardar(Tecnico);
+        navigationManager.NavigateTo(uri: "/Tecnico/Index");
+
+    }
+}

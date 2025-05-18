@@ -1,11 +1,12 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using RegistroTecnicos.DAL;
 using RegistroTecnicos.Models;
 
 namespace RegistroTecnicos.Services
 {
-    public class TecnicosSerices(IDbContextFactory<Contexto> DbFactory)
+    public class TecnicosServices(IDbContextFactory<Contexto> DbFactory)
     {
         // Metodo Guardar
         public async Task<bool> Guardar(Tecnicos tecnico)
