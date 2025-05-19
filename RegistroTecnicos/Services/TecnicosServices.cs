@@ -57,7 +57,7 @@ namespace RegistroTecnicos.Services
             return await contexto.Tecnicos
                 .FirstOrDefaultAsync(t => t.TecnicoId == TecnicoId);
         }
-
+        
         //Metodo Eliminar
         public async Task<bool> Eliminar(int tecnicoId)
         {

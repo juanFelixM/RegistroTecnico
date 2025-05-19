@@ -55,7 +55,8 @@
 						<th>TecnicoId</th>
 						<th>Nombres</th>
 						<th>SueldoHora</th>
-						<th colspan="2" class="text-center">Acciones</th>
+						<th>Editar</th>
+						<th>Eliminar</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,13 +69,13 @@
 							<td> @tecnico.SueldoHora</td>
 
 							@*TBN Editar*@
-							<td class="text-center">
-								<a href="/Tecnico/Edit/@tecnico.TecnicoId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+							<td>
+								<a href="/Tecnico/Edit/@tecnico.TecnicoId" class="btn btn-outline-success bi bi-pencil-square"></a>
 							</td>
 
 							@*TBN Eliminar*@
-							<td class="text-center">
-								<button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(tecnico.TecnicoId)"></button>
+							<td>
+								<a href="/Tecnico/Delete/@tecnico.TecnicoId" class="btn btn-outline-danger bi bi-trash"></a>
 							</td>
 						</tr>
 					}
@@ -111,11 +112,5 @@
 		{
 			tecnicos = await tecnicosServices.Listar(t => t.SueldoHora.ToString().Contains(ValorFiltro));
 		}
-	}
-
-	private async Task Eliminar(int id)
-	{
-		await tecnicosServices.Eliminar(id);
-		tecnicos = await tecnicosServices.Listar(t => t != null);
 	}
 }

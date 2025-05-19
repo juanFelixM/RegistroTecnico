@@ -29,7 +29,7 @@
 
         @*Footer*@
         <div class="card-footer text-center">
-            <a href="/Tecnico" class="btn btn-primary"> <span class="bi bi-arrow-left"></span> Volver</a>
+            <a href="/Tecnico/Index" class="btn btn-primary"> <span class="bi bi-arrow-left"></span> Volver</a>
             <button type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
         </div>
     </div>
@@ -55,10 +55,8 @@
 
         if (eliminado == true)
         {
-            navigationManager.NavigateTo("/Tecnico");
+            navigationManager.NavigateTo("/Tecnico/Index");
         }
-
-
     }
 
 }
