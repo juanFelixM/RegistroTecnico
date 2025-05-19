@@ -54,7 +54,7 @@ namespace RegistroTecnicos.Services
         public async Task<Tecnicos?> Buscar(int TecnicoId)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
-            return await contexto.Tecnicos.Include(d => d.TecnicoId)
+            return await contexto.Tecnicos
                 .FirstOrDefaultAsync(t => t.TecnicoId == TecnicoId);
         }
 
