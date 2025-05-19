@@ -33,18 +33,18 @@ namespace RegistroTecnicos.Services
 
         //Metodo Insertar
 
-        public async Task<bool> Insertar(Tecnicos tecnicos)
+        public async Task<bool> Insertar(Tecnicos tecnico)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
-            contexto.Tecnicos.Add(tecnicos);
+            contexto.Tecnicos.Add(tecnico);
             return await contexto.SaveChangesAsync() > 0;
         }
 
         //Metodo Modificar
-        public async Task<bool> Modificar(Tecnicos tecnicos)
+        public async Task<bool> Modificar(Tecnicos tecnico)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
-            contexto.Entry(tecnicos).State = EntityState.Modified;
+            contexto.Update(tecnico);
             return await contexto
                 .SaveChangesAsync() > 0;
            
