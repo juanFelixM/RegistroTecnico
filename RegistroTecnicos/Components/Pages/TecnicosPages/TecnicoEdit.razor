@@ -70,8 +70,11 @@
 
 
 @code {
+
+    [Parameter] 
+    public int TecnicoId { get; set; }
+
 	public Tecnicos Tecnico { get; set; } = new();
-	[Parameter] public int TecnicoId { get; set; }
 
 	public string existeNombre = "";
 
@@ -83,13 +86,13 @@
 	private async Task Guardar()
 	{
 		List<Tecnicos> tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
-		if (tecnicos.Count==1 && (tecnicos[0].TecnicoId != Tecnico.TecnicoId))
+		if (tecnicos.Count == 1 && (tecnicos[0].TecnicoId != Tecnico.TecnicoId))
 		{
 			existeNombre = "El nombre ya existe";
 			return;
 
 		}
-		await tecnicosServices.Insertar(Tecnico);
+		await tecnicosServices.Guardar(Tecnico);
 		navigationManager.NavigateTo("/Tecnico/Index");
 	}
 
