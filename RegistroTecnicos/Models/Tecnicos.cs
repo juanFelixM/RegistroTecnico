@@ -7,10 +7,10 @@ namespace RegistroTecnicos.Models
         [Key]
         public int TecnicoId { get; set; }
         [Required(ErrorMessage = "El Nombre es requerido")]
-        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "En este campo solo se permiten letras. ")]
-        public string? Nombres { get; set; } = null;
+        //[RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "En este campo solo se permiten letras. ")]
+        public string Nombres { get; set; } = "";
         [Required(ErrorMessage = "El Sueldo es requerido")]
-        [Range(minimum: 0.1, maximum: 5000, ErrorMessage = "Por favor, ingrese una cantidad mayor a 0 y menor o igual a 5000 ")]
+        //[Range(minimum: 0.1, maximum: 5000, ErrorMessage = "Por favor, ingrese una cantidad mayor a 0 y menor o igual a 5000 ")]
         public double SueldoHora { get; set; }
     }
 }

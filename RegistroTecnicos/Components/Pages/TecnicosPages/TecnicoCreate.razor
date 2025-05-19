@@ -44,21 +44,19 @@
 
                 @*footer*@
                 <div class="card-footer text-center mt-2">
-                    <a href="/Tecnico/Index" class="btn btn-secondary">
-                        <span class="bi bi-arrow-left"> </span>
-                        Volver
-                    </a>
-
+                    <a href="/Tecnico/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"> </span> Volver</a>
                     <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
                 </div>
 
             </div>
         </div>
     </div>
+
 </EditForm>
 
-@code
-{
+@code {
+    Tecnicos Tecnicos = new Tecnicos();
+
     private string TecnicoExistente = "";
 
     private Tecnicos Tecnico { get; set; } = new Tecnicos();
@@ -68,7 +66,7 @@
         List<Tecnicos> tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
         if (tecnicos.Count == 1 && (tecnicos[0].TecnicoId != Tecnico.TecnicoId))
         {
-            TecnicoExistente = "Ya existe este tecnico";
+            TecnicoExistente = "Ya existe un Tenico con ese nombre";
             return;
         }
         await tecnicosServices.Guardar(Tecnico);

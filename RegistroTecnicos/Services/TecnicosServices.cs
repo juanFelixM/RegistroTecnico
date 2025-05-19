@@ -23,7 +23,7 @@ namespace RegistroTecnicos.Services
         }
 
         // Metodo Existe
-        private async Task<bool> Existe(int TecnicoId)
+        public async Task<bool> Existe(int TecnicoId)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
             return await contexto.Tecnicos
@@ -33,7 +33,7 @@ namespace RegistroTecnicos.Services
 
         //Metodo Insertar
 
-        private async Task<bool> Insertar(Tecnicos tecnicos)
+        public async Task<bool> Insertar(Tecnicos tecnicos)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
             contexto.Tecnicos.Add(tecnicos);
@@ -41,7 +41,7 @@ namespace RegistroTecnicos.Services
         }
 
         //Metodo Modificar
-        private async Task<bool> Modificar(Tecnicos tecnicos)
+        public async Task<bool> Modificar(Tecnicos tecnicos)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
             contexto.Entry(tecnicos).State = EntityState.Modified;

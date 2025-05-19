@@ -1,5 +1,75 @@
-﻿<h3>TecnicoEdit</h3>
+﻿@page "/Tecnico/Edit/{TecnicoId:int}"
+@inject TecnicosServices tecnicosServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<h3>Editar tecnico</h3>
+
+@*HTML*@
+<PageTitle>Crear Tecnico</PageTitle>
+<EditForm Model="Tecnico" OnValidSubmit="Guardar">
+	<DataAnnotationsValidator />
+
+	<div class="container">
+		<div class="card shadow-lg">
+			<h5 class="card-title">Editar Tecnico</h5>
+				</div>
+
+			<div class="card-body">
+				@*TecnicoId*@
+				<div class=" mb-3">
+					<label class="form-label"><strong>TeccnicoId</strong></label>
+					<InputNumber class="form-control" @bind-Value="Tecnico.TecnicoId" readon />
+				</div>
+				@*Nombres*@
+				<div class="mb-3">
+					<label class="alert-warnig"><strong>@existeNombre</strong></label><br />
+					<label class="form-label"><strong>Nombres</strong></label>
+					<InputText class="form-control" @bind-Value="Tecnico.Nombres" />
+				</div>
+
+				@*SueldoHora*@
+				<div class="mb-3">
+					<label class="form-label"><strong>SueldoHora</strong></label>
+					<InputNumber class="form-control" @bind-Value="Tecnico.SueldoHora" />
+					<ValidationMessage For="(() => Tecnico.SueldoHora)" />
+				</div>
+
+				@*footer*@
+				<div class ="card-footer text-center mt-2">
+					<a href="/Tecnico/Index" class="btn-secondary"><span class="bi bi-arrow-left"></span>Volver</a>
+					<button type="submit" class="btn btn-primary bi bi-floppy">Guardar</button>
+				</div>
+		</div>
+	</div>
+
+
+</EditForm>
+
+
 
 @code {
+	public Tecnicos Tecnico { get; set; } = new();
+	[Parameter] public int TecnicoId { get; set; }
+
+	public string existeNombre = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		Tecnico = await tecnicosServices.Buscar(TecnicoId);
+	}
+
+	private async Task Guardar()
+	{
+		List<Tecnicos> tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
+		if (tecnicos.Count==1 && (tecnicos[0].TecnicoId != Tecnico.TecnicoId))
+		{
+			existeNombre = "El nombre ya existe";
+			return;
+
+		}
+		await tecnicosServices.Insertar(Tecnico);
+		navigationManager.NavigateTo("/Tecnico/Index");
+	}
 
 }
