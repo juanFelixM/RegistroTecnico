@@ -63,10 +63,10 @@
 
     public async Task Guardar()
     {
-        List<Tecnicos> tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
+        var tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
         if (tecnicos.Count == 1 && (tecnicos[0].TecnicoId != Tecnico.TecnicoId))
         {
-            TecnicoExistente = "Ya existe un Tenico con ese nombre";
+            TecnicoExistente = "Ya existe un Tecnico con ese nombre";
             return;
         }
         await tecnicosServices.Guardar(Tecnico);
