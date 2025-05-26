@@ -3,15 +3,23 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Lista de tecnicos</PageTitle>
+<PageTitle>Lista de Tecnicos</PageTitle>
 <div class="container">
 	<div class="card shadow-lg">
-		<div class="card-header space-between">
-			<h5 class="card-title text-center">Consulta de tecnicos</h5>
-			<a href="/Tecnico/Create" class="btn btn-primary"> <span class=" bi bit-plus-square mt-3"></span> Crear </a>
+		<div class="card-header text-center bg-primary text-white">
+			<h5 class="card-title text-center">
+				<strong>
+					Consulta de Tecnicos
+				</strong>
+			</h5>
 		</div>
 
 		<div class="card-body">
+			<div class="d-flex justify-content-end mb-2">
+				<a href="/Tecnico/Create" class="btn btn-success">
+					<span class="bi bi-plus-square"></span> Crear
+				</a>
+			</div>
 			@*Labels*@
 			<div class="row">
 				@*Filtrar por*@
