@@ -1,0 +1,155 @@
+﻿@page "/Ticket/Index"
+@inject TicketsServices TicketsServices
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Tickets</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card header">
+        </div>
+        <div class="card-body">
+            <h5 class="text-center">Consulta de tickets</h5>
+            <div class="row">
+                <div class="d-flex justify-content-end mb-2">
+                    <a href="/Ticket/Create" class="btn btn-success">
+                        <span class="bi bi-plus-square"></span> Crear
+                    </a>
+                </div>
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="@Filtro">
+                        <option value="" disabled selected>Elija una opcion</option>
+                        <option value="Prioridad">Prioridad</option>
+                        <option value="Cliente">Nombre Cliente</option>
+                        <option value="Tecnico">Nombre Tecnico</option>
+                        <option value="Asunto">Asunto</option>
+                        <option value="Descripcion">Descripcion</option>
+                    </InputSelect>
+                </div>
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-hover">
+                <thead class="table table-striped text-black">
+                    <tr>
+                        <th>Ticket Id</th>
+                        <th>Fecha</th>
+                        <th>Prioridad</th>
+                        <th>Cliente Id</th>
+                        <th>Asunto</th>
+						<th>Descripci&oacute;n</th>
+						<th>Tiempo Invertido</th>
+                        <th>T&eacute;cnico Encargado</th>
+                         <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Tickets)
+                    {
+                        <tr>
+                            <td>@ticket.TicketId</td>
+                            <td>@ticket.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@prioridades[ticket.Prioridad - 1]</td>
+                            <td>@Clientes.Find(c => c.ClienteId == ticket.ClienteId)?.Nombres</td>
+                            <td>@ticket.Asunto.ToString()</td>
+                            <td>@ticket.Descripcion</td>
+                            <td>@ticket.TiempoInvertido</td>
+                            <td>@Tecnicos.Find(t => t.TecnicoId == ticket.TecnicoId)?.Nombres</td>
+                            <td class="text-center">
+                                <a href="/Ticket/Edit/@ticket.TicketId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>    
+
+        </div>
+    </div>
+</div>
+
+@code
+{
+
+    public List<Tickets> Tickets { get; set; } = new List<Tickets>();
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
+    public List<Clientes> Clientes { get; set; } = new List<Clientes>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+    public List<string> prioridades = new List<string> { "Baja", "Media", "Alta" };
+
+
+    private async Task Buscar()
+    {
+        if (Filtro == "TicketId")
+        {
+            if (int.TryParse(ValorFiltro, out int ticketId))
+            {
+                Tickets = await TicketsServices
+                    .Listar(t => t.TicketId == ticketId);
+            }
+
+
+        }
+        else if (Filtro == "ClienteId")
+        {
+            if (int.TryParse(ValorFiltro, out int clienteId))
+            {
+               Tickets = await TicketsServices.Listar(t => t.ClienteId == clienteId);
+            }
+        }
+        else if (Filtro == "Prioridad")
+        {
+            if (int.TryParse(ValorFiltro, out int prioridad))
+            {
+                Tickets = await TicketsServices.Listar(t => t.Prioridad == prioridad);
+            }
+        }
+        else if (Filtro == "Cliente") {
+            if (int.TryParse(ValorFiltro, out int cliente))
+            {
+                Tickets = await TicketsServices.Listar(t => t.Prioridad == cliente);
+            }
+        }
+		else if (Filtro == "TecnicoId")
+		{
+            if (int.TryParse(ValorFiltro, out int Tecnico))
+            {
+                Tickets = await TicketsServices.Listar(t => t.TecnicoId == Tecnico);
+            }
+		}
+		else if (Filtro == "Asunto")
+		{
+            if (int.TryParse(ValorFiltro, out int asunto))
+            {
+                Tickets = await TicketsServices.Listar(t => t.Asunto != null && t.Asunto.Contains(ValorFiltro, StringComparison.OrdinalIgnoreCase));
+            }
+		}
+        else if (Filtro == "Descripcion")
+		{
+			Tickets = await TicketsServices.Listar(t => t.Descripcion != null && t.Descripcion.Contains(ValorFiltro, StringComparison.OrdinalIgnoreCase));
+		}
+		else
+		{
+			Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
+		}
+    }
+
+    @*Metodo Restablecer para restablecer filtros y Tickets*@
+    private async Task Restablecer()
+    {
+        Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
+        Filtro = string.Empty;
+        ValorFiltro = string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
+
+    }
+}
