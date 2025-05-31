@@ -1,25 +1,18 @@
-﻿@page "/Cliente/Create"
-@inject ClientesService ClientesService
-@inject CiudadesService CiudadesServices
+﻿@page "/Cliente/Edit/{ClienteId:int}"
+@inject ClientesServices ClientesService
+@inject TecnicosServices tecnicosServices
 @inject NavigationManager navigationManager
-@inject TecnicosService TecnicosService
 @rendermode InteractiveServer
 
 
-<PageTitle>Registro de clientes</PageTitle>
-<div>
-    @if (!string.IsNullOrEmpty(MensajeError))
-    {
-        <div class="alert alert-danger">@MensajeError</div>
-    }
-</div>
-<EditForm Model="Cliente" OnValidSubmit="Guardar" FormName="Cliente">
+<PageTitle>Editar Cliente</PageTitle>
+<EditForm Model="Cliente" OnValidSubmit="Modificar">
     <DataAnnotationsValidator />
     <div class="container">
         <div class="card shadow-lg">
             <div class="card-header text-center">
                 <h5 class="card-title">
-                    Registro de clientes
+                    Editar cliente
                 </h5>
             </div>
             <div class="card-body">
@@ -30,6 +23,14 @@
                         <strong>ClienteId</strong>
                     </label>
                     <InputNumber class="form-control" @bind-Value="Cliente.ClienteId" readonly />
+                </div>
+
+                @*Fecha de Ingreso*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>Fecha de Ingreso</strong>
+                    </label>
+                    <InputDate class="form-control" @bind-Value="Cliente.FechaIngreso"/>
                 </div>
 
                 @*Nombres*@
@@ -45,56 +46,47 @@
                         <strong>Direcci&oacute;n</strong>
                     </label>
                     <InputText class="form-control" @bind-Value="Cliente.Direccion" />
-                    <InputSelect class="form-control form-select" @bind-Value="@Cliente.CiudadId">
-                        <option value="0" selected disabled>Seleccione una Ciudad</option>
-                        @foreach (var ciudad in ListaCiudades)
-                        {
-                            <option value="@ciudad.CiudadId">@ciudad.NombreCiudad</option>
-                        }
-                    </InputSelect>
                 </div>
-                @*Fecha de ingreso*@
-                <div class="mb-3">
-                    <label class="form-label">
-                        <strong>Fecha de Ingreso</strong>
-                    </label>
-                    <InputDate class="form-control" @bind-Value="Cliente.Fecha" readonly />
-                </div>
+
                 @*Rnc*@
                 <div class="mb-3">
                     <label class="form-label">
                         <strong>RNC</strong>
                     </label>
-                    <InputText class="form-control" @bind-Value="Cliente.Rnc" />
+                    <InputText class="form-control" @bind-Value="Cliente.RNC" />
+                    <ValidationMessage For="@(()=> Cliente.RNC)" />
                 </div>
-                @*Limite Credito*@
+
+                @*Limite de Credito*@
                 <div class="mb-3">
                     <label class="form-label">
                         <strong>L&iacute;mite cr&eacute;dito</strong>
                     </label>
                     <InputNumber class="form-control" @bind-Value="Cliente.LimiteCredito" />
+                    <ValidationMessage For="@(()=>Cliente.LimiteCredito)" />
                 </div>
 
-                @*Lista de técnicos Encargados*@
+                @*Técnico Encargado*@
                 <div class="mb-3">
                     <label>
                         <strong>T&eacute;cnico encargado</strong>
                     </label>
-                    <InputSelect class="form-control form-select" @bind-Value="@Cliente.TecnicoId">
+                    <InputSelect class="form-control form-select" @bind-Value="@Cliente.TecnicoEncargadoId">
                         <option value="0" selected disabled>Seleccione un T&eacute;cnico</option>
                         @foreach (var tecnico in ListaTecnicos)
                         {
-                            <option value="@tecnico.TecnicoId">@tecnico.Nombres</option>
+                            <option value="@tecnico?.TecnicoId">@tecnico.Nombres</option>
                         }
                     </InputSelect>
-
                 </div>
 
                 @*Footer*@
                 <div class="card-footer mt-2 text-center">
-                    <button type="button" class="btn btn-outline-success" @onclick="Nuevo">Nuevo</button>
-                    <button type="submit" class="btn btn-primary bi bi-floppy">Guardar</button>
-                    <a href="/Cliente" class="btn btn-secondary"><span class="bi bi-arrow-left"></span> Retroceder</a>
+                    <div class="btn-group" role="group">
+                        <a href="/Cliente/Delete/@ClienteId" class="btn btn-outline-primary bi bi-trash"> Eliminar</a>
+                        <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+                        <a href="/Cliente/Index" class="btn btn-outline-secondary"><span class="bi bi-arrow-left"></span> Volver</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,28 +95,24 @@
 
 @code
 {
-
+    [Parameter]
+    public int ClienteId { get; set; }
     @*Instanciar Cliente*@
     private Clientes Cliente { get; set; } = new Clientes();
     @*Lista de técnicos*@
     public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
-    public List<Ciudades> ListaCiudades { get; set; } = new List<Ciudades>();
+
     protected override async Task OnInitializedAsync()
     {
-        ListaCiudades = await CiudadesServices.Listar(c => c.CiudadId > 0);
-        ListaTecnicos = await TecnicosService.Listar(c => c.TecnicoId > 0);
+        Cliente = await ClientesService.Buscar(ClienteId);
+        ListaTecnicos = await tecnicosServices.Listar(c => c.TecnicoId > 0);
     }
 
+    @*Mensaje de Error*@
     public string MensajeError { get; set; } = string.Empty;
 
-
-    @*Limpiar campos.*@
-    public void Nuevo()
-    {
-        this.Cliente = new Clientes();
-    }
-
-    private async Task Guardar()
+    @*Método Modificar*@
+    private async Task Modificar()
     {
 
         if (await ValidarNombre())
@@ -138,31 +126,26 @@
             return;
         }
 
-        if (string.IsNullOrEmpty(Cliente.Nombres))
-        {
-            MensajeError = "El campo Nombres no puede estar vacío.";
-            return;
-        }
 
         var creado = await ClientesService.Guardar(Cliente);
         if (creado)
         {
-            navigationManager.NavigateTo("/Cliente");
-            MensajeError = String.Empty;
-
+            navigationManager.NavigateTo("/Cliente/Index");
         }
     }
 
+    @*Metodo que valida si existe Nombre*@
     public async Task<bool> ValidarNombre()
     {
         var existe = await ClientesService.ExisteNombre(Cliente.ClienteId, Cliente.Nombres);
         return existe;
     }
 
+    @*Metodo que valida si existe Rnc*@
     public async Task<bool> ValidarRnc()
     {
         var existe =
-            await ClientesService.ExisteRnc(Cliente.ClienteId, Cliente.Rnc);
+        await ClientesService.ExisteRnc(Cliente.ClienteId, Cliente.RNC);
         return existe;
     }
 }

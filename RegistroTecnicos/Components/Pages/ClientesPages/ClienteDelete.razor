@@ -1,0 +1,61 @@
+﻿@page "/Cliente/Delete/{ClienteId:int}"
+@inject ClientesServices clientesServices
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header text-center">
+            <h5><strong>Datos del cliente</strong></h5>
+        </div>
+        @*Body*@
+        <div class="card-body">
+            <div class="text-center">
+                <h5><strong>Eliminar Cliente</strong></h5>
+                <h6 class="text-bg-danger">Está seguro de que desea eliminar el cliente?</h6>
+            </div>
+            @*Datos del cliente*@
+            <ul class="mt-4">
+                <li><strong>ClienteId: </strong>@cliente.ClienteId</li>
+                <li><strong>Nombres: </strong>@cliente.Nombres</li>
+                <li><strong>Direcci&oacute;n: </strong>@cliente.Direccion</li>
+                <li><strong>Fecha de Ingreso: </strong>@cliente.FechaIngreso</li>
+                <li><strong>Rnc: </strong>@cliente.RNC</li>
+                <li><strong>L&iacute;mite de Credito: </strong>@cliente.LimiteCredito.ToString("N2")</li>
+                <li><strong>T&eacute;cnico Encargado: </strong>@cliente.TecnicoEncargadoId</li>
+            </ul>
+        </div>
+        @*Footer*@
+        <div class="card-footer text-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
+                <a href="/Cliente/Edit/@ClienteId" class="btn btn-outline-secondary"><span class="bi bi-arrow-left"></span> Volver</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    @*Parametro para el índice de la página*@
+    [Parameter] public int ClienteId { get; set; }
+    public Clientes cliente { get; set; } = new Clientes();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cliente = await clientesServices.Buscar(ClienteId);
+
+    }
+
+    @*Eliminar técnico*@
+    public async Task Eliminar()
+    {
+        var eliminado = await clientesServices.Eliminar(cliente.ClienteId);
+
+        if (eliminado == true)
+        {
+            NavigationManager.NavigateTo("/Cliente");
+        }
+    }
+}

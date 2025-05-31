@@ -43,10 +43,14 @@
 
                 @*footer*@
                 <div class="card-footer text-center mt-2">
-                    <a href="/Tecnico/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"> </span> Volver</a>
-                    <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary bi bi-file-earmark-plus" @onclick="Nuevo"> Limpiar</button>
+                        <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+                        <a href="/Tecnico/Index" class="btn btn-outline-secondary">
+                            <span class="bi bi-arrow-left"></span> Volver
+                        </a>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -71,5 +75,11 @@
         await tecnicosServices.Guardar(Tecnico);
         navigationManager.NavigateTo(uri: "/Tecnico/Index");
 
+    }
+
+    private void Nuevo()
+    {
+        Tecnico = new Tecnicos();
+        StateHasChanged();
     }
 }

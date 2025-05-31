@@ -1,0 +1,102 @@
+﻿@page "/Cliente/Index"
+@inject ClientesServices clientesServices
+@rendermode InteractiveServer
+
+<PageTitle>Registro de clientes</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card header">
+        </div>
+        <div class="card-body">
+            <h5 class="text-center">Consulta de clientes</h5>
+            <div class="row">
+                <div class="d-flex justify-content-end mb-2">
+                    <a href="/Cliente/Create" class="btn btn-success">
+                        <span class="bi bi-plus-square"></span> Crear
+                    </a>
+                </div>
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="@Filtro">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        <option value="ClienteId">ClienteId</option>
+                        <option value="Nombres">Nombres</option>
+                    </InputSelect>
+                </div>
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-striped table-hover table-bordered mt-4">
+                <thead class="table table-striped text-black">
+                    <tr>
+                        <th>ClienteId</th>
+						<th>Fecha Ingreso</th>
+                        <th>Nombres</th>
+                        <th>Direcci&oacute;n</th>
+                        <th>Rnc</th>
+                        <th>L&iacute;mite de credito</th>
+                        <th>T&eacute;cnico Encargado</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*Clientes*@
+                    @foreach (var cliente in ListaClientes)
+                    {
+                        <tr>
+                            <td>@cliente.ClienteId</td>
+							<td>@cliente.FechaIngreso.ToString("dd/MM/yyyy")</td>
+                            <td>@cliente.Nombres</td>
+                            <td>@cliente.Direccion</td>
+                            <td>@cliente.RNC</td>
+                            <td>@cliente.LimiteCredito.ToString("N2")</td>
+                            <td>@cliente.TecnicoEncargadoId</td>
+                            <td class="text-center">
+                                <a class="btn btn-outline-primary bi bi-pencil-square" href="/Cliente/Edit/@cliente.ClienteId"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        ListaClientes = await clientesServices.Listar(c => c.ClienteId > 0);
+
+    }
+
+    @*Buscar técnicos según el filtro*@
+    private async Task Buscar()
+    {
+        if (Filtro == "ClienteId")
+        {
+            if (int.TryParse(ValorFiltro, out int clienteId))
+            {
+                ListaClientes = await clientesServices
+                    .Listar(c => c.ClienteId == clienteId);
+            }
+
+
+        }
+        else if (ValorFiltro.Trim() != "" && Filtro == "Nombres")
+        {
+            ListaClientes = await clientesServices
+                .Listar(t => t.Nombres.ToLower()
+                    .Contains(ValorFiltro.ToLower()));
+        }
+    }
+}
