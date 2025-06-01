@@ -1,10 +1,11 @@
 ﻿@page "/Ticket/Edit/{TicketId:int}"
 @inject TicketsServices TicketsService
 @inject ClientesServices ClientesService
+@inject TecnicosServices TecnicosService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Registro de Tickets</PageTitle>
+<PageTitle>Editar Tickets</PageTitle>
 
 <div>
     @if (!string.IsNullOrEmpty(MensajeError))
@@ -20,7 +21,7 @@
     <div class="container">
         <div class="card shadow-lg">
             <div class="card-header text-center">
-                <h5 class="card-title">Registro de Tickets</h5>
+                <h5 class="card-title">Editar Ticket</h5>
             </div>
             <div class="card-body">
                 @*TicketId*@
@@ -45,10 +46,10 @@
                         <strong>Prioridad</strong>
                     </label>
                     <InputSelect class="form-control form-select" @bind-Value="@Ticket.Prioridad">
-                        <option value="0" selected disabled>Seleccione prioridad</option>
-                        <option value="Baja">1-Baja</option>
-                        <option value="Media">2-Media</option>
-                        <option value="Alta">3-Alta</option>
+                        <option value="0" disabled selected>Seleccione prioridad</option>
+                        <option value="1">1 - Baja</option>
+                        <option value="2">2 - Media</option>
+                        <option value="3">3 - Alta</option>
                     </InputSelect>
                     <ValidationMessage For="@(() => Ticket.Prioridad)" />
                 </div>
@@ -98,12 +99,35 @@
 
                     </label>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>
+                            Tecnico:
+                        </strong>
+                        <InputSelect class="form-control form-select" @bind-Value="@Ticket.TecnicoId">
+                            <option value="0" selected disabled>Seleccione un Tecnico</option>
+                            @foreach (var tecnico in ListaTecnicos)
+                            {
+                                <option value="@tecnico.TecnicoId">@tecnico.Nombres</option>
+                            }
+                        </InputSelect>
+
+
+                    </label>
+                </div>
             </div>
+
 
             @*Footer*@
             <div class="card-footer mt-2 text-center">
-                <button type="submit" class="btn btn-primary bi bi-floppy">Guardar</button>
-                <a href="/Ticket" class="btn btn-secondary"><span class="bi bi-arrow-left"></span> Retroceder</a>
+                <div class="btn-group" role="group">
+                    <a href="/Ticket/Delete/@TicketId" class="btn btn-outline-primary bi bi-trash"> Eliminar</a>
+                    <button type="submit" class="btn btn-outline-success bi bi-floppy">Guardar</button>
+                    <a href="/Ticket/Index" class="btn btn-outline-secondary">
+                        <span class="bi bi-arrow-left"></span> Volver
+                    </a>      
+                </div>                
             </div>
         </div>
     </div>
@@ -115,13 +139,14 @@
     private Tickets Ticket { get; set; } = new Tickets();
     public string MensajeError { get; set; } = string.Empty;
     public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
 
     private async Task Modificar()
     {
         var creado = await TicketsService.Guardar(Ticket);
         if (creado)
         {
-            NavigationManager.NavigateTo("/Ticket");
+            NavigationManager.NavigateTo("/Ticket/Index");
         }
     }
 
@@ -129,6 +154,8 @@
     {
         Ticket = await TicketsService.Buscar(TicketId);
         ListaClientes = await ClientesService.Listar(c => c.ClienteId > 0);
+        ListaTecnicos = await TecnicosService.Listar(t => t.TecnicoId > 0);
+
     }
 
 
