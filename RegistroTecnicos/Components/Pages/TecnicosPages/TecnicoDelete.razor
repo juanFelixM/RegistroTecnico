@@ -29,8 +29,10 @@
 
         @*Footer*@
         <div class="card-footer text-center">
-            <a href="/Tecnico/Index" class="btn btn-primary"> <span class="bi bi-arrow-left"></span> Volver</a>
-            <button type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
+            <div class="btn-group" role="group">
+                <a href="/Tecnico/Edit/@TecnicoId" class="btn btn-outline-primary"> <span class="bi bi-arrow-left"></span> Volver</a>
+                <button type="button" class="btn btn-outline-danger bi bi-trash" @onclick="Eliminar"> Eliminar</button>
+            </div>
         </div>
     </div>
 </div>

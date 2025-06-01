@@ -3,17 +3,23 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-
-@*HTML*@
-<PageTitle>Lista de tecnicos</PageTitle>
+<PageTitle>Lista de Tecnicos</PageTitle>
 <div class="container">
 	<div class="card shadow-lg">
-		<div class="card-header space-between">
-			<h5 class="card-title text-center">Registro de Tecnicos</h5>
-			<a href="/Tecnico/Create" class="btn btn-primary"> <span class=" bi bit-plus-square bi trask mt-3"></span> Crear </a>
+		<div class="card-header text-center bg-primary text-white">
+			<h5 class="card-title text-center">
+				<strong>
+					Consulta de Tecnicos
+				</strong>
+			</h5>
 		</div>
 
 		<div class="card-body">
+			<div class="d-flex justify-content-end mb-2">
+				<a href="/Tecnico/Create" class="btn btn-success">
+					<span class="bi bi-plus-square"></span> Crear
+				</a>
+			</div>
 			@*Labels*@
 			<div class="row">
 				@*Filtrar por*@
@@ -34,9 +40,9 @@
 				<div class="col-3">
 					<InputSelect class="form-select" @bind-Value="Filtro">
 						<option value="">Seleccione</option>
-						<option value="TecnicoId">TecnicoId</option>
+						<option value="TecnicoId">Tecnico Id</option>
 						<option value="Nombres">Nombres</option>
-						<option value="SueldoHora">SueldoHora</option>
+						<option value="SueldoHora">Sueldo Hora</option>
 					</InputSelect>
 				</div>
 
@@ -49,14 +55,13 @@
 				</div>
 			</div>
 
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-bordered mt-4">
 				<thead class="table text-black">
 					<tr>
-						<th>TecnicoId</th>
+						<th>Tecnico Id</th>
 						<th>Nombres</th>
-						<th>SueldoHora</th>
+						<th>Sueldo Hora</th>
 						<th>Editar</th>
-						<th>Eliminar</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,14 +73,9 @@
 							<td> @tecnico.Nombres</td>
 							<td> @tecnico.SueldoHora</td>
 
-							@*TBN Editar*@
+							@*Editar*@
 							<td>
 								<a href="/Tecnico/Edit/@tecnico.TecnicoId" class="btn btn-outline-success bi bi-pencil-square"></a>
-							</td>
-
-							@*TBN Eliminar*@
-							<td>
-								<a href="/Tecnico/Delete/@tecnico.TecnicoId" class="btn btn-outline-danger bi bi-trash"></a>
 							</td>
 						</tr>
 					}

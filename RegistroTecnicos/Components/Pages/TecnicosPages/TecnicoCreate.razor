@@ -3,7 +3,6 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-@*HTML*@
 <PageTitle>Create</PageTitle>
 <EditForm Model="Tecnico" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
@@ -44,10 +43,14 @@
 
                 @*footer*@
                 <div class="card-footer text-center mt-2">
-                    <a href="/Tecnico/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"> </span> Volver</a>
-                    <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary bi bi-file-earmark-plus" @onclick="Nuevo"> Limpiar</button>
+                        <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+                        <a href="/Tecnico/Index" class="btn btn-outline-secondary">
+                            <span class="bi bi-arrow-left"></span> Volver
+                        </a>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -63,14 +66,20 @@
 
     public async Task Guardar()
     {
-        List<Tecnicos> tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
+        var tecnicos = await tecnicosServices.Listar(t => t.Nombres == Tecnico.Nombres);
         if (tecnicos.Count == 1 && (tecnicos[0].TecnicoId != Tecnico.TecnicoId))
         {
-            TecnicoExistente = "Ya existe un Tenico con ese nombre";
+            TecnicoExistente = "Ya existe un Tecnico con ese nombre";
             return;
         }
         await tecnicosServices.Guardar(Tecnico);
         navigationManager.NavigateTo(uri: "/Tecnico/Index");
 
+    }
+
+    private void Nuevo()
+    {
+        Tecnico = new Tecnicos();
+        StateHasChanged();
     }
 }

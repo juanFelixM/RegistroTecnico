@@ -52,15 +52,11 @@
 
                 @*Footer*@
                 <div class="card-footer text-center mt-2">
-                    <a href="/Tecnico/Index" class="btn-secondary">
-                        <span class="bi bi-arrow-left>" />
-                    </a>
-                    <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
-
-                    <a href="/Tecnico/Index" class="btn btn-danger">
-                        <span class="bi bi-arrow-left"> </span>
-                        Retroceder
-                    </a>
+                    <div class="btn-group" role="group">
+                        <a href="/Tecnico/Delete/@TecnicoId" class="btn btn-outline-primary bi bi-trash"> Eliminar</a>
+                        <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+                        <a href="/Tecnico/Index" class="btn btn-outline-secondary"><span class="bi bi-arrow-left"></span> Volver</a>
+                    </div>
                 </div>
             </div>
         </div>
