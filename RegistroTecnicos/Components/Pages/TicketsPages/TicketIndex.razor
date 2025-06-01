@@ -1,5 +1,7 @@
 ﻿@page "/Ticket/Index"
 @inject TicketsServices TicketsServices
+@inject ClientesServices ClientesServices
+@inject TecnicosServices TecnicosServices
 @rendermode InteractiveServer
 
 <PageTitle>Registro de Tickets</PageTitle>
@@ -33,7 +35,7 @@
                 </div>
             </div>
 
-            <table class="table table-hover">
+            <table class="table table-striped table-hover table-bordered mt-4">
                 <thead class="table table-striped text-black">
                     <tr>
                         <th>Ticket Id</th>
@@ -41,10 +43,10 @@
                         <th>Prioridad</th>
                         <th>Cliente Id</th>
                         <th>Asunto</th>
-						<th>Descripci&oacute;n</th>
-						<th>Tiempo Invertido</th>
+                        <th>Descripci&oacute;n</th>
+                        <th>Tiempo Invertido</th>
                         <th>T&eacute;cnico Encargado</th>
-                         <th>Editar</th>
+                        <th>Editar</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,11 +56,11 @@
                             <td>@ticket.TicketId</td>
                             <td>@ticket.Fecha.ToString("dd/MM/yyyy")</td>
                             <td>@prioridades[ticket.Prioridad - 1]</td>
-                            <td>@Clientes.Find(c => c.ClienteId == ticket.ClienteId)?.Nombres</td>
+                            <td>@Clientes.Find(c => c.ClienteId == ticket.ClienteId)?.ClienteId</td>
                             <td>@ticket.Asunto.ToString()</td>
                             <td>@ticket.Descripcion</td>
                             <td>@ticket.TiempoInvertido</td>
-                            <td>@Tecnicos.Find(t => t.TecnicoId == ticket.TecnicoId)?.Nombres</td>
+                            <td>@Tecnicos.Find(t => t.TecnicoId == ticket.TecnicoId)?.TecnicoId</td>
                             <td class="text-center">
                                 <a href="/Ticket/Edit/@ticket.TicketId" class="btn btn-outline-primary bi bi-pencil-square"></a>
                             </td>
@@ -81,6 +83,12 @@
     public string ValorFiltro { get; set; } = string.Empty;
     public List<string> prioridades = new List<string> { "Baja", "Media", "Alta" };
 
+    protected override async Task OnInitializedAsync()
+    {
+        Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
+        Tecnicos = await TecnicosServices.Listar(t => t.TecnicoId > 0);
+        Clientes = await ClientesServices.Listar(c => c.ClienteId > 0);
+    }
 
     private async Task Buscar()
     {
@@ -98,7 +106,7 @@
         {
             if (int.TryParse(ValorFiltro, out int clienteId))
             {
-               Tickets = await TicketsServices.Listar(t => t.ClienteId == clienteId);
+                Tickets = await TicketsServices.Listar(t => t.ClienteId == clienteId);
             }
         }
         else if (Filtro == "Prioridad")
@@ -114,42 +122,34 @@
                 Tickets = await TicketsServices.Listar(t => t.Prioridad == cliente);
             }
         }
-		else if (Filtro == "TecnicoId")
-		{
+        else if (Filtro == "TecnicoId")
+        {
             if (int.TryParse(ValorFiltro, out int Tecnico))
             {
                 Tickets = await TicketsServices.Listar(t => t.TecnicoId == Tecnico);
             }
-		}
-		else if (Filtro == "Asunto")
-		{
+        }
+        else if (Filtro == "Asunto")
+        {
             if (int.TryParse(ValorFiltro, out int asunto))
             {
                 Tickets = await TicketsServices.Listar(t => t.Asunto != null && t.Asunto.Contains(ValorFiltro, StringComparison.OrdinalIgnoreCase));
             }
-		}
+        }
         else if (Filtro == "Descripcion")
-		{
-			Tickets = await TicketsServices.Listar(t => t.Descripcion != null && t.Descripcion.Contains(ValorFiltro, StringComparison.OrdinalIgnoreCase));
-		}
-		else
-		{
-			Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
-		}
+        {
+            Tickets = await TicketsServices.Listar(t => t.Descripcion != null && t.Descripcion.Contains(ValorFiltro, StringComparison.OrdinalIgnoreCase));
+        }
+        else
+        {
+            Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
+        }
     }
 
-    @*Metodo Restablecer para restablecer filtros y Tickets*@
     private async Task Restablecer()
     {
         Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
         Filtro = string.Empty;
         ValorFiltro = string.Empty;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-
-        Tickets = await TicketsServices.Listar(t => t.TicketId > 0);
-
     }
 }
