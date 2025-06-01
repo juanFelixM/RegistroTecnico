@@ -2,15 +2,10 @@
 @inject TicketsServices TicketsService
 @inject ClientesServices ClientesService
 @inject NavigationManager NavigationManager
+@inject TecnicosServices TecnicosService
+@rendermode InteractiveServer
 
 <PageTitle>Registro de Tickets</PageTitle>
-
-<div>
-    @if (!string.IsNullOrEmpty(MensajeError))
-    {
-        <div class="alert alert-danger">@MensajeError</div>
-    }
-</div>
 
 <EditForm Model="@Ticket" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
@@ -22,10 +17,11 @@
                 <h5 class="card-title">Registro de Tickets</h5>
             </div>
             <div class="card-body">
-                @*TicketId*@
+
+                @*Ticket Id*@
                 <div class="mb-3">
                     <label class="form-label">
-                        <strong>TicketId</strong>
+                        <strong>Ticket Id</strong>
                     </label>
                     <InputNumber class="form-control" @bind-Value="Ticket.TicketId" readonly />
                 </div>
@@ -44,21 +40,18 @@
                         <strong>Prioridad</strong>
                     </label>
                     <InputSelect class="form-control form-select" @bind-Value="@Ticket.Prioridad">
-                        <option value="0" selected disabled>Seleccione prioridad</option>
-                        <option value="Baja">1-Baja</option>
-                        <option value="Media">2-Media</option>
-                        <option value="Alta">3-Alta</option>
+                        <option value="0" disabled selected>Seleccione prioridad</option>
+                        <option value="1">1 - Baja</option>
+                        <option value="2">2 - Media</option>
+                        <option value="3">3 - Alta</option>
                     </InputSelect>
                     <ValidationMessage For="@(() => Ticket.Prioridad)" />
                 </div>
-
                 @*Asunto*@
-                <div class="mb-3">
-                    <label class="form-label">
-                        <strong>Asunto</strong>
-                    </label>
-                    <InputText class="form-control" @bind-Value="Ticket.Asunto"></InputText>
-                    <ValidationMessage For="@(() =>Ticket.Asunto)"></ValidationMessage>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label"><strong>Asunto</strong></label>
+                    <InputText class="form-control" @bind-Value="Ticket.Asunto" />
+                    <ValidationMessage For="(() => Ticket.Asunto)" />
                 </div>
 
                 @*Descripcion*@
@@ -80,7 +73,7 @@
                     </label>
                     <InputNumber class="form-control" @bind-Value="Ticket.TiempoInvertido"></InputNumber>
                 </div>
-
+                @* Cliente Id*@
                 <div class="mb-3">
                     <label class="form-label">
                         <strong>
@@ -93,18 +86,32 @@
                                 <option value="@cliente.ClienteId">@cliente.Nombres</option>
                             }
                         </InputSelect>
-
-
                     </label>
                 </div>
-            </div>
+            
+			    @*Tecnico Encargado*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>
+                            Tecnico:
+                        </strong>
+                        <InputSelect class="form-control form-select" @bind-Value="@Ticket.TecnicoId">
+                            <option value="0" selected disabled>Seleccione un Tecnico</option>
+                            @foreach (var tecnico in ListaTecnicos)
+                            {
+                                <option value="@tecnico.TecnicoId">@tecnico.Nombres</option>
+                            }
+                        </InputSelect>
+                    </label>
+                </div>
+             </div>
 
             @*Footer*@
             <div class="card-footer mt-2 text-center">
 
                 <div class="btn-group" role="group">
                     <button type="button" class="btn btn-outline-primary bi bi-file-earmark-plus" @onclick="Nuevo"> Limpiar</button>
-                    <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+                    <button type="submit" class="btn btn-outline-success bi bi-floppy">Guardar</button>
                     <a href="/Ticket/Index" class="btn btn-outline-secondary">
                         <span class="bi bi-arrow-left"></span> Volver
                     </a>
@@ -112,13 +119,14 @@
             </div>
         </div>
     </div>
+
 </EditForm>
 
 @code {
     private Tickets Ticket { get; set; } = new Tickets();
     public string MensajeError { get; set; } = string.Empty;
     public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
-
+	public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
     public void Nuevo()
     {
         this.Ticket = new Tickets();
@@ -137,6 +145,7 @@
     {
 
         ListaClientes = await ClientesService.Listar(c => c.ClienteId > 0);
+		ListaTecnicos = await TecnicosService.Listar(t => t.TecnicoId > 0);
     }
 
 
