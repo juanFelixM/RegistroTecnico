@@ -75,13 +75,9 @@
                             <td> @sistema.Complejidad</td>
                             @*BTN Editar*@
                             <td class="text-center">
-                                <a href="/Sistemas/editar/@sistema.SistemaId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                                <a href="/Sistemas/Edit/@sistema.SistemaId" class="btn btn-outline-primary bi bi-pencil-square"></a>
                             </td>
 
-                            @*BTN Eliminar*@
-                            <td class="text-center">
-                                <button class="btn btn-outline-danger bi bi-trash" @onclick="() => Eliminar(sistema.SistemaId)"></button>
-                            </td>
                         </tr>
                     }
                 </tbody>
@@ -98,7 +94,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Buscar();
+        listaSistemas = await sistemasServices.Listar(c => c.SistemaId > 0);
     }
 
     public async Task Buscar()
