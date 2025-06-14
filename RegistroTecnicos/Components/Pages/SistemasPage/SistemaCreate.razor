@@ -1,0 +1,77 @@
+﻿@page "/Sistemas/Create"
+@inject SistemasServices sistemasServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Create</PageTitle>
+<EditForm Model="Sistema" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h5 class="card-title">Registrar Sistema</h5>
+            </div>
+
+            <div class="card-body">
+
+                @*SistemaId*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>Sistema Id</strong>
+                        <InputNumber class="form-control" @bind-Value="Sistema.SistemaId"></InputNumber>
+                    </label>
+                </div>
+
+                @*Descripcion*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>Descripci&oacute;n</strong>
+                        <InputText class="form-control" @bind-Value="Sistema.Descripcion"></InputText>
+                        <ValidationMessage For="(() => Sistema.Descripcion)" />
+                    </label>
+                </div>
+
+                @*Complejidad*@
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>Complejidad</strong>
+                        <InputNumber class="form-control" @bind-Value="Sistema.Complejidad"></InputNumber>
+                        <ValidationMessage For="(() => Sistema.Complejidad)" />
+                    </label>
+                </div>
+
+                @*footer*@
+                <div class="card-footer text-center mt-2">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary bi bi-file-earmark-plus" @onclick="Nuevo"> Limpiar</button>
+                        <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+                        <a href="/Sistemas/Index" class="btn btn-outline-secondary">
+                            <span class="bi bi-arrow-left">Volver</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+
+    private Sistemas Sistema { get; set; } = new Sistemas();
+
+    private async Task Guardar()
+    {
+        var creado = await sistemasServices.Guardar(Sistema);
+        if (creado)
+        {
+            navigationManager.NavigateTo("/Sistemas/Index");
+        }
+    }
+    private void Nuevo()
+    {
+        Sistema = new Sistemas();
+        StateHasChanged();
+    }
+}
