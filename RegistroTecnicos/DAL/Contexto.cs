@@ -11,4 +11,7 @@ public class Contexto : DbContext
     public DbSet<Clientes> Clientes { get; set; }
     public DbSet<Tickets> Tickets { get; set; }
     public DbSet<Sistemas> Sistemas { get; set; }
+    public DbSet<ClienteDetalles> ClienteDetalles { get; set; }
+    public DbSet<TiposTelefonos> TiposTelefonos { get; set; }
+
 }
