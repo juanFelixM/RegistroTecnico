@@ -13,6 +13,8 @@ public class Contexto : DbContext
     public DbSet<Sistemas> Sistemas { get; set; }
     public DbSet<ClienteDetalles> ClienteDetalles { get; set; }
     public DbSet<TiposTelefonos> TiposTelefonos { get; set; }
+    public DbSet<Ventas> Ventas { get; set; }
+    public DbSet<VentasDetalles> VentasDetalles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
