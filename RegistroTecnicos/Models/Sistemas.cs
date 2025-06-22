@@ -12,4 +12,5 @@ public class Sistemas
     [Required(ErrorMessage = "El campo numero es requerido.")]
     [Range(1, 100)]
     public double Complejidad { get; set; }
+    public int Existencia { get; set; } 
 }
