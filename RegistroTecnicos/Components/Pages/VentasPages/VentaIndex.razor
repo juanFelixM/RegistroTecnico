@@ -121,7 +121,7 @@
         }
         else if (Filtro == "ClienteId")
         {
-            listaVentas = await ventasServices.Listar(s => s.ClienteId.Contains(ValorFiltro));
+            listaVentas = await ventasServices.Listar(s => s.ClienteId.ToString().Contains(ValorFiltro));
         }
         else if (Filtro == "Monto")
         {
