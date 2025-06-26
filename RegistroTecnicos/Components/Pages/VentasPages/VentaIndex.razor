@@ -1,5 +1,6 @@
 ﻿@page "/Ventas/Index"
 @inject VentasServices ventasServices
+@inject ClientesServices clientesServices
 @rendermode InteractiveServer
 
 <PageTitle>Lista de Ventas</PageTitle>
@@ -63,8 +64,8 @@
                     <label class="form-label"><strong>Fecha Hasta</strong></label>
                     <InputDate @bind-Value="FechaHasta" class="form-control form-control-sm" />
                 </div>
-            </div>           
-    
+            </div>
+
 
             <table class="table table-striped table-hover table-bordered mt-4">
                 <thead class="table text-black">
@@ -72,7 +73,7 @@
 
                         <th>Venta Id</th>
                         <th>Fecha</th>
-                        <th>Cliente Id</th>
+                        <th>Cliente</th>
                         <th>Monto</th>
 
                         <th colspan="2" class="text-center">Editar</th>
@@ -84,8 +85,8 @@
                         <tr>
                             @*Detalle*@
                             <td> @venta.VentaId</td>
-                            <td> @venta.Fecha</td>
-                            <td> @venta.ClienteId</td>
+                            <td> @venta.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td> @clientes.FirstOrDefault(c => c.ClienteId == venta.ClienteId)?.Nombres</td>
                             <td> @venta.Monto</td>
                             @*BTN Editar*@
                             <td class="text-center">
@@ -103,6 +104,7 @@
 
 @code {
     List<Ventas> listaVentas = new();
+	List<Clientes> clientes = new();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
     public DateTime FechaDesde { get; set; }
@@ -111,6 +113,7 @@
     protected override async Task OnInitializedAsync()
     {
         listaVentas = await ventasServices.Listar(c => c.VentaId > 0);
+		clientes = await clientesServices.Listar(c => c.ClienteId > 0);
     }
 
     public async Task Buscar()
