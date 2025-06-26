@@ -1,5 +1,6 @@
 ﻿@page "/Cliente/Index"
 @inject ClientesServices clientesServices
+@inject TecnicosServices tecnicosServices
 @rendermode InteractiveServer
 
 <PageTitle>Registro de clientes</PageTitle>
@@ -54,7 +55,7 @@
                             <td>@cliente.Direccion</td>
                             <td>@cliente.RNC</td>
                             <td>@cliente.LimiteCredito.ToString("N2")</td>
-                            <td>@cliente.TecnicoEncargadoId</td>
+                            <td>@Tecnicos.FirstOrDefault(t => t.TecnicoId == cliente.TecnicoEncargadoId)?.Nombres</td>
                             <td class="text-center">
                                 <a class="btn btn-outline-primary bi bi-pencil-square" href="/Cliente/Edit/@cliente.ClienteId"></a>
                             </td>
@@ -68,6 +69,7 @@
 
 @code
 {
+    public List<Tecnicos> Tecnicos { get; set; } = new List<Tecnicos>();
     public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
@@ -76,6 +78,8 @@
     {
 
         ListaClientes = await clientesServices.Listar(c => c.ClienteId > 0);
+        Tecnicos = await tecnicosServices.Listar(c => c.TecnicoId > 0);
+
 
     }
 

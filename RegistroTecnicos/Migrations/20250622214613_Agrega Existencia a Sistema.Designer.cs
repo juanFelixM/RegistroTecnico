@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RegistroTecnicos.DAL;
@@ -11,9 +12,11 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20250622214613_Agrega Existencia a Sistema")]
+    partial class AgregaExistenciaaSistema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,16 +97,11 @@ namespace RegistroTecnicos.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
 
                     b.Property<int>("Existencia")
                         .HasColumnType("integer");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Precio")
-                        .HasColumnType("numeric");
 
                     b.HasKey("SistemaId");
 
@@ -200,62 +198,6 @@ namespace RegistroTecnicos.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RegistroTecnicos.Models.Ventas", b =>
-                {
-                    b.Property<int>("VentaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("VentaId"));
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("VentaId");
-
-                    b.HasIndex("ClienteId");
-
-                    b.ToTable("Ventas");
-                });
-
-            modelBuilder.Entity("RegistroTecnicos.Models.VentasDetalles", b =>
-                {
-                    b.Property<int>("DetalleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DetalleId"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Precio")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("SistemaId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("VentaId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("DetalleId");
-
-                    b.HasIndex("SistemaId");
-
-                    b.HasIndex("VentaId");
-
-                    b.ToTable("VentasDetalles");
-                });
-
             modelBuilder.Entity("RegistroTecnicos.Models.ClienteDetalles", b =>
                 {
                     b.HasOne("RegistroTecnicos.Models.Clientes", null)
@@ -265,46 +207,9 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RegistroTecnicos.Models.Ventas", b =>
-                {
-                    b.HasOne("RegistroTecnicos.Models.Clientes", "Cliente")
-                        .WithMany("Ventas")
-                        .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("RegistroTecnicos.Models.VentasDetalles", b =>
-                {
-                    b.HasOne("RegistroTecnicos.Models.Sistemas", "Sistema")
-                        .WithMany()
-                        .HasForeignKey("SistemaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RegistroTecnicos.Models.Ventas", "Venta")
-                        .WithMany("ventasDetalles")
-                        .HasForeignKey("VentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sistema");
-
-                    b.Navigation("Venta");
-                });
-
             modelBuilder.Entity("RegistroTecnicos.Models.Clientes", b =>
                 {
                     b.Navigation("ClienteDetalles");
-
-                    b.Navigation("Ventas");
-                });
-
-            modelBuilder.Entity("RegistroTecnicos.Models.Ventas", b =>
-                {
-                    b.Navigation("ventasDetalles");
                 });
 #pragma warning restore 612, 618
         }

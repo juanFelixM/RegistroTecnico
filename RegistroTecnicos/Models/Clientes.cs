@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RegistroTecnicos.Models;
 
@@ -25,4 +26,10 @@ public class Clientes
 
     [Required(ErrorMessage = "El Tecnico Encargado es requerido")]
     public int TecnicoEncargadoId { get; set; }
+
+    [ForeignKey("ClienteId")]
+    public ICollection<ClienteDetalles> ClienteDetalles { get; set; } = new List<ClienteDetalles>();
+
+    [InverseProperty("Cliente")]
+    public ICollection<Ventas> Ventas { get; set; } = new List<Ventas>();
 }

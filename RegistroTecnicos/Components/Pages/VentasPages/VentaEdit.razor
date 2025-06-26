@@ -1,0 +1,290 @@
+﻿@page "/Ventas/Edit/{VentaId:int}"
+@inject VentasServices ventasServices
+@inject ClientesServices clientesServices
+@inject SistemasServices sistemasServices
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Editar Venta</PageTitle>
+
+@if (!mostrandoEliminar)
+{
+    <EditForm Model="Venta" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <div class="container">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-primary text-white">
+                    <h5 class="card-title"><strong>Editar Venta</strong></h5>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Venta ID</strong></label>
+                        <input class="form-control" @bind="Venta.VentaId" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Fecha</strong></label>
+                        <InputDate class="form-control" @bind-Value="Venta.Fecha" />
+                        <ValidationMessage For="(() => Venta.Fecha)" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Cliente</strong></label>
+                        <InputSelect class="form-select" @bind-Value="Venta.ClienteId">
+                            <option value="">-- Seleccione un cliente --</option>
+                            @foreach (var cliente in Clientes)
+                            {
+                                <option value="@cliente.ClienteId">@cliente.Nombres</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => Venta.ClienteId)" />
+                    </div>
+                    <div class="col-md-4">
+                        @if (Venta.ClienteId > 0)
+                        {
+                            var cliente = Clientes.FirstOrDefault(c => c.ClienteId == Venta.ClienteId);
+                            if (cliente != null)
+                            {
+                                <div class="alert alert-info mt-2 p-2">
+                                    Crédito disponible: <strong>@cliente.LimiteCredito.ToString("N2")</strong>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="mt-3 border border-success p-2">
+                        <h5><strong>Detalles de la venta</strong></h5>
+                        <div class="row mb-1">
+                            <div class="col-3">
+                                <label class="col-form-label">Sistema</label>
+                            </div>
+                            <div class="col-2">
+                                <label class="col-form-label">Cantidad</label>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-3">
+                                <InputSelect class="form-select" @bind-Value="SistemaSelectId">
+                                    <option disabled value="0">Seleccione un sistema</option>
+                                    @foreach (var sistema in Sistema)
+                                    {
+                                        <option value="@sistema.SistemaId">@sistema.Descripcion</option>
+                                    }
+                                </InputSelect>
+                            </div>
+                            <div class="col-2">
+                                <InputNumber class="form-control" @bind-Value="Cantidad"/>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" @onclick="AddSis" class="btn btn-primary bi bi-plus"> Agregar</button>
+                            </div>
+                        </div>
+                        <table class="table table-hover">
+                            <thead class="table table-striped text-black">
+                                <tr>
+                                    <th>Sistema Id</th>
+                                    <th>Descripcion</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ventasDetalles in VentasDetalles)
+                                {
+                                    <tr>
+                                        <td>@ventasDetalles.SistemaId</td>
+                                        <td>@ventasDetalles.Sistema?.Descripcion</td>
+                                        <td>@("$" + (ventasDetalles.Sistema?.Precio ?? 0).ToString("N2"))</td>
+                                        <td>@ventasDetalles.Cantidad</td>
+                                        <td>
+                                            <button type="button" class="btn btn-secondary" @onclick="() => Eliminar(ventasDetalles.SistemaId)">
+                                                <span class="bi bi-trash"></span> Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div class="m-3 ">
+                            <label class="row"><strong>Monto Total</strong></label>
+                            <label class="text-end">@MontoTotal.ToString("N2")</label>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center py-2">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-danger bi bi-trash" @onclick="MostrarEliminar"> Eliminar</button>
+                            <button type="submit" class="btn btn-outline-success bi bi-floppy"> Guardar</button>
+                            <a href="/Ventas/Index" class="btn btn-outline-secondary">
+                                <span class="bi bi-arrow-left"></span> Volver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+else
+{
+    <EditForm Model="Venta" OnValidSubmit="Eliminar">
+        <div class="card shadow-lg">
+            <div class="card-header text-center bg-primary text-white">
+                <h5 class="card-title"><strong>Eliminar Venta</strong></h5>
+            </div>
+            <div class="card-subtitle text-center bg-danger text-white py-2">
+                <h5>¿Estás seguro de querer eliminar esta venta?</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label"><strong>Venta ID: </strong>@Venta?.VentaId</label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Fecha: </strong>@(Venta?.Fecha.ToShortDateString() ?? "-")</label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Monto: </strong>@(Venta?.Monto.ToString("N2") ?? "0.00")</label>
+                </div>
+            </div>
+            <div class="card-footer text-center mt-2">
+                <div class="btn-group" role="group" aria-label="Acciones unidas">
+                    <button type="submit" class="btn btn-outline-danger bi bi-trash">Eliminar</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="Volver">
+                        <span class="bi bi-arrow-left"></span> Volver
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int VentaId { get; set; }
+    private List<Clientes> Clientes { get; set; } = new();
+    public int SistemaSelectId { get; set; }
+    public List<Sistemas> Sistema { get; set; } = new List<Sistemas>();
+    public int Cantidad { get; set; }
+    public List<VentasDetalles> VentasDetalles { get; set; } = new();
+    public decimal MontoTotal { get; set; }
+    public Ventas Venta { get; set; } = new()
+    {
+        ventasDetalles = new List<VentasDetalles>()
+    };
+
+    private string SistemaInput { get; set; } = string.Empty;
+    private bool mostrandoEliminar = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Venta = await ventasServices.Buscar(VentaId);
+        if (Venta == null)
+        {
+            Venta = new Ventas
+                {
+                    Fecha = DateTime.UtcNow.Date,
+                    ventasDetalles = new List<VentasDetalles>()
+                };
+        }
+        Clientes = await clientesServices.Listar(c => true);
+        Sistema = await sistemasServices.Listar(s => true);
+        VentasDetalles = Venta.ventasDetalles?.ToList() ?? new List<VentasDetalles>();
+        foreach (var detalle in VentasDetalles)
+        {
+            detalle.Sistema = Sistema.FirstOrDefault(s => s.SistemaId == detalle.SistemaId);
+        }
+        CalcularMontoTotal();
+    }
+    private void CalcularMontoTotal()
+    {
+        MontoTotal = VentasDetalles.Sum(d => d.Monto);
+    }
+
+    private async Task Guardar()
+    {
+        Venta.Fecha = DateTime.SpecifyKind(Venta.Fecha, DateTimeKind.Utc);
+        Venta.Monto = MontoTotal;
+
+        Venta.ventasDetalles = VentasDetalles.ToList();
+        foreach (var detalle in Venta.ventasDetalles)
+        {
+            if (detalle.Sistema == null)
+            {
+                detalle.Sistema = Sistema.FirstOrDefault(s => s.SistemaId == detalle.SistemaId);
+            }
+            if (detalle.Sistema != null)
+            {
+                detalle.Precio = detalle.Sistema.Precio;
+                detalle.Monto = detalle.Precio * detalle.Cantidad;
+            }
+            detalle.Sistema = null;
+        }
+        var resultado = await ventasServices.Guardar(Venta);
+		if (!resultado)
+        {
+			return;
+        }
+        navigationManager.NavigateTo("/Ventas/Index");
+    }
+
+    private async Task Eliminar()
+    {
+        var eliminado = await ventasServices.Eliminar(Venta.VentaId);
+        if (eliminado)
+        {
+            navigationManager.NavigateTo("/Ventas/Index");
+        }
+    }
+
+    private void AddSis()
+    {
+        if (SistemaSelectId == 0 || Cantidad <= 0)
+            return;
+        var sistema = Sistema.FirstOrDefault(s => s.SistemaId == SistemaSelectId);
+        if (sistema == null)
+            return;
+        var detalleExistente = VentasDetalles.FirstOrDefault(d => d.SistemaId == SistemaSelectId);
+        if (detalleExistente != null)
+        {
+            detalleExistente.Cantidad += Cantidad;
+            detalleExistente.Monto = detalleExistente.Precio * detalleExistente.Cantidad;
+        }
+        else
+        {
+            VentasDetalles.Add(new VentasDetalles
+                {
+                    SistemaId = SistemaSelectId,
+                    Cantidad = Cantidad,
+                    Precio = sistema.Precio,
+                    Monto = sistema.Precio * Cantidad
+                });
+        }
+        CalcularMontoTotal();
+        Cantidad = 0;
+        SistemaSelectId = 0;
+    }
+
+    private void Eliminar(int sistemaId)
+    {
+        var detalle = VentasDetalles.FirstOrDefault(d => d.SistemaId == sistemaId);
+        if (detalle != null)
+        {
+            VentasDetalles.Remove(detalle);
+            SistemaSelectId = detalle.SistemaId;
+            Cantidad = detalle.Cantidad;
+            var sistema = Sistema.FirstOrDefault(s => s.SistemaId == detalle.SistemaId);
+            if (sistema != null)
+            {
+                SistemaInput = sistema.Descripcion;
+            }
+            CalcularMontoTotal();
+        }
+    }
+
+    private void MostrarEliminar()
+    {
+        mostrandoEliminar = true;
+    }
+
+    private void Volver()
+    {
+        navigationManager.NavigateTo("/Ventas/Index");
+    }
+}

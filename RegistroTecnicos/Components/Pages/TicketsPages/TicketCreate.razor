@@ -146,6 +146,8 @@
 
         ListaClientes = await ClientesService.Listar(c => c.ClienteId > 0);
 		ListaTecnicos = await TecnicosService.Listar(t => t.TecnicoId > 0);
+        Ticket.Fecha = DateTime.UtcNow.Date;
+
     }
 
 

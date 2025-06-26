@@ -42,6 +42,7 @@
                         <option value="SistemaId">Sistema Id</option>
                         <option value="Descripcion">Descripci&oacute;n</option>
                         <option value="Complejidad">Complejidad</option>
+						<option value="Existencia">Existencia</option>
                     </InputSelect>
                 </div>
 
@@ -61,6 +62,8 @@
                         <th>Sistema Id</th>
                         <th>Descripci&oacute;n</th>
                         <th>Complejidad</th>
+						<th>Existencia</th>
+                        <th>Precio</th>
 
                         <th colspan="2" class="text-center">Editar</th>
                     </tr>
@@ -73,6 +76,8 @@
                             <td> @sistema.SistemaId</td>
                             <td> @sistema.Descripcion</td>
                             <td> @sistema.Complejidad</td>
+							<td> @sistema.Existencia</td>
+                            <td> @sistema.Precio</td>
                             @*BTN Editar*@
                             <td class="text-center">
                                 <a href="/Sistemas/Edit/@sistema.SistemaId" class="btn btn-outline-primary bi bi-pencil-square"></a>
@@ -111,6 +116,10 @@
         {
             listaSistemas = await sistemasServices.Listar(s => s.Complejidad == Convert.ToInt32(ValorFiltro));
         }
+		else if (Filtro == "Existencia")
+		{
+			listaSistemas = await sistemasServices.Listar(s => s.Existencia == Convert.ToInt32(ValorFiltro));
+		}
     }
 
     public async Task Eliminar(int id)

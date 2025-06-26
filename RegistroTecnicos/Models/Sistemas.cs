@@ -6,10 +6,19 @@ public class Sistemas
 {
     [Key]
     public int SistemaId { get; set; }
-    [Required(ErrorMessage = "El campo descripción es requerido.")]
-    [StringLength(250)]
-    public string Descripcion { get; set; }
-    [Required(ErrorMessage = "El campo numero es requerido.")]
-    [Range(1, 100)]
+
+    [Required(ErrorMessage = "La Descripción es requerida")]
+    public string Descripcion { get; set; } = null!;
+
+    [Required(ErrorMessage = "La Complejidad es requerida")]
     public double Complejidad { get; set; }
+
+    [Required(ErrorMessage = "La Existencia es requerida")]
+    public int Existencia { get; set; }
+
+    [Required(ErrorMessage = "El Precio es requerido")]
+    public decimal Precio { get; set; }
+
+    [Required(ErrorMessage = "El Monto es requerido")]
+    public decimal Monto { get; set; }
 }
