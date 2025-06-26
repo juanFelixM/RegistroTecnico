@@ -16,6 +16,12 @@
                 <h5 class="card-title"><strong>Registrar Venta</strong></h5>
             </div>
             <div class="card-body">
+                @if (!string.IsNullOrEmpty(Mensaje))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @Mensaje
+                    </div>
+                }
                 <div class="col-md-4">
                     <label class="form-label"><strong>Venta ID</strong></label>
                     <input class="form-control" @bind="Venta.VentaId" readonly />
@@ -62,7 +68,7 @@
                         <div class="col-3">
                             <InputSelect class="form-select" @bind-Value="SistemaSelectId">
                                 <option value="0">Seleccione un sistema</option>
-                                @foreach (var sistema in Sistemas)
+                                @foreach (var sistema in Sistema)
                                 {
                                     <option value="@sistema.SistemaId">@sistema.Descripcion</option>
                                 }
@@ -125,7 +131,7 @@
     private string Mensaje = "";
     private List<Clientes> Clientes { get; set; } = new();
     public int SistemaSelectId { get; set; }
-    public List<Sistemas> Sistemas { get; set; } = new List<Sistemas>();
+    public List<Sistemas> Sistema { get; set; } = new List<Sistemas>();
     public int Cantidad { get; set; }
     public List<VentasDetalles> VentasDetalles { get; set; } = new();
     public decimal MontoTotal { get; set; }
@@ -135,22 +141,12 @@
         };
     protected override async Task OnInitializedAsync()
     {
-        var lista = await ventasServices.Listar(v => true);
-        var ids = lista.Select(v => v.VentaId).OrderBy(id => id).ToList();
-        int proximoId = 1;
-        foreach (var id in ids)
-        {
-            if (id == proximoId)
-                proximoId++;
-            else
-                break;
-        }
-        Venta.VentaId = proximoId;
         Venta.Fecha = DateTime.UtcNow.Date;
         Clientes = await clientesServices.Listar(c => true);
-        Sistemas = await sistemasServices.Listar(s => true);
+        Sistema = await sistemasServices.Listar(s => true);
         CalcularMontoTotal();
     }
+
     private void CalcularMontoTotal()
     {
         MontoTotal = VentasDetalles.Sum(d => d.Monto);
@@ -182,17 +178,19 @@
             Mensaje = "No se pudo guardar la venta.";
         }
     }
+
     private void AddSis()
     {
         if (SistemaSelectId == 0 || Cantidad <= 0)
             return;
-        var sistema = Sistemas.FirstOrDefault(s => s.SistemaId == SistemaSelectId);
+        var sistema = Sistema.FirstOrDefault(s => s.SistemaId == SistemaSelectId);
         if (sistema == null)
             return;
         var detalleExistente = VentasDetalles.FirstOrDefault(d => d.SistemaId == SistemaSelectId);
         if (detalleExistente != null)
         {
             detalleExistente.Cantidad += Cantidad;
+            detalleExistente.Monto = detalleExistente.Precio * detalleExistente.Cantidad;
         }
         else
         {
@@ -208,6 +206,7 @@
         Cantidad = 0;
         SistemaSelectId = 0;
     }
+
     private void Eliminar(int sistemaId)
     {
         var detalle = VentasDetalles.FirstOrDefault(d => d.SistemaId == sistemaId);
@@ -217,6 +216,7 @@
             CalcularMontoTotal();
         }
     }
+
     private void Nuevo()
     {
         Venta = new Ventas
