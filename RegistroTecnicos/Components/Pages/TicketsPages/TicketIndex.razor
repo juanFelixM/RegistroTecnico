@@ -56,11 +56,11 @@
                             <td>@ticket.TicketId</td>
                             <td>@ticket.Fecha.ToString("dd/MM/yyyy")</td>
                             <td>@prioridades[ticket.Prioridad - 1]</td>
-                            <td>@Clientes.Find(c => c.ClienteId == ticket.ClienteId)?.ClienteId</td>
+                            <td>@Clientes.Find(c => c.ClienteId == ticket.ClienteId)?.Nombres</td>
                             <td>@ticket.Asunto.ToString()</td>
                             <td>@ticket.Descripcion</td>
                             <td>@ticket.TiempoInvertido</td>
-                            <td>@Tecnicos.Find(t => t.TecnicoId == ticket.TecnicoId)?.TecnicoId</td>
+                            <td>@Tecnicos.Find(t => t.TecnicoId == ticket.TecnicoId)?.Nombres</td>
                             <td class="text-center">
                                 <a href="/Ticket/Edit/@ticket.TicketId" class="btn btn-outline-primary bi bi-pencil-square"></a>
                             </td>
